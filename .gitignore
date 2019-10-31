@@ -251,5 +251,6 @@ paket-files/
 .idea/
 *.sln.iml
 BuildArtifacts/
-tools/
 src/Cake.GitHub/Properties/launchSettings.json
+tools/**
+!tools/packages.config
