@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Cake.GitHub.Tests</AssemblyName>
+    <PackageId>Cake.GitHub.Tests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeFrameworkVersion>2.0.3</RuntimeFrameworkVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cake.Core" Version="0.33.0" />
+    <PackageReference Include="FakeItEasy" Version="4.5.1" />
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.7.0" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.1" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cake.GitHub\Cake.GitHub.csproj" />
+  </ItemGroup>
+
+</Project>
