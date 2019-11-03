@@ -11,7 +11,7 @@ Allows updating the status of a build in GitHub.
 API documentation: https://developer.github.com/v3/repos/statuses/#create-a-status
 
 ```
-GitHubStatus("username", "apitoken", "owner", "repository", new GitHubStatusSettings
+GitHubStatus("username", "apitoken", "owner", "repository", "commitSha", new GitHubStatusSettings
 {
     State = GitHubStatusState.Pending,
     TargetUrl = "url-to-build-server",
