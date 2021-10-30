@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Cake.Core.IO;
+﻿using Cake.Core.IO;
 using Moq;
 using Octokit;
 using System;

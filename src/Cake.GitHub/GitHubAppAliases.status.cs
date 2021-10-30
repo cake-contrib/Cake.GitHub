@@ -30,7 +30,7 @@
         /// </example>
         [CakeAliasCategory("Deployment")]
         [CakeMethodAlias]
-        public static GitHubStatusResult GitHubStatus(this ICakeContext context, string userName, string apiToken, string owner, string repository, string reference, GitHubStatusSettings settings)
+        public static GitHubStatusResult GitHubStatus(this ICakeContext context, string? userName, string apiToken, string owner, string repository, string reference, GitHubStatusSettings? settings)
         {
 #if DEBUG
             if (!Debugger.IsAttached)

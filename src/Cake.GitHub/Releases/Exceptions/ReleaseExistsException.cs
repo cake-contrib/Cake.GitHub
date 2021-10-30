@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace Cake.GitHub
+﻿namespace Cake.GitHub
 {
     /// <summary>
     /// Thrown when a GitHub Release with the same tag name already exists

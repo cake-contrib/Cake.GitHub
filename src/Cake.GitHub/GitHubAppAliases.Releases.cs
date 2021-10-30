@@ -19,7 +19,7 @@ namespace Cake.GitHub
             string owner,
             string repository,
             string tagName,
-            GitHubCreateReleaseSettings settings = null)
+            GitHubCreateReleaseSettings? settings = null)
         {
             settings = settings ?? new GitHubCreateReleaseSettings();
 

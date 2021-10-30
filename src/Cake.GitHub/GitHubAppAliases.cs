@@ -21,7 +21,7 @@
     [CakeAliasCategory("GitHub")]
     public static partial class GitHubAliases
     {
-        private static Connection CreateConnection(string userName, string apiToken)
+        private static Connection CreateConnection(string? userName, string apiToken)
         {
             Credentials credentials;
 
