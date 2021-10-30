@@ -41,7 +41,7 @@
 
             settings = settings ?? new GitHubStatusSettings();
 
-            var connection = CreateApiConnection(userName, apiToken);
+            var connection = CreateConnection(userName, apiToken);
 
             try
             {
@@ -71,7 +71,7 @@
                         break;
                 }
 
-                var commitStatusClient = new CommitStatusClient(connection);
+                var commitStatusClient = new CommitStatusClient(new ApiConnection(connection));
                 var createStatusTask = commitStatusClient.Create(owner, repository, reference, commitStatus);
                 createStatusTask.Wait();
 

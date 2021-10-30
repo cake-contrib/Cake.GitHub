@@ -1,6 +1,6 @@
 ﻿using Cake.Core;
 using Cake.Core.Annotations;
-using System;
+using Octokit;
 using System.Threading.Tasks;
 
 namespace Cake.GitHub
@@ -13,24 +13,24 @@ namespace Cake.GitHub
         /// </summary>
         [CakeMethodAlias]
         public static async Task<GitHubRelease> GitHubCreateReleaseAsync(
-            this ICakeContext context, 
-            string userName, 
-            string apiToken, 
-            string owner, 
-            string repository, 
+            this ICakeContext context,
+            string userName,
+            string apiToken,
+            string owner,
+            string repository,
             string tagName,
-            GitHubCreateReleaseSettings settings)
+            GitHubCreateReleaseSettings settings = null)
         {
-            if (settings is null)
-                throw new ArgumentNullException(nameof(settings));
+            settings = settings ?? new GitHubCreateReleaseSettings();
 
-            var releaseCreator = new GitHubReleaseCreator(context.Log, context.FileSystem, new GitHubClientFactory());
+            var connection = CreateConnection(userName, apiToken);
+            var githubClient = new GitHubClient(connection);
+            var releaseCreator = new GitHubReleaseCreator(context.Log, context.FileSystem, githubClient);
+
             return await releaseCreator.CreateRelease(
-                userName: userName, 
-                apiToken: apiToken, 
-                owner: owner, 
-                repository: repository, 
-                tagName: tagName, 
+                owner: owner,
+                repository: repository,
+                tagName: tagName,
                 settings: settings
             );
         }

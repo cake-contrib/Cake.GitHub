@@ -15,19 +15,21 @@ namespace Cake.GitHub
     {
         private readonly ICakeLog m_CakeLog;
         private readonly IFileSystem m_FileSystem;
-        private readonly IGitHubClientFactory m_ClientFactory;
-
-
-        public GitHubReleaseCreator(ICakeLog cakeLog, IFileSystem fileSystem, IGitHubClientFactory clientFactory)
+        private readonly IGitHubClient m_GithubClient;
+        
+        
+        public GitHubReleaseCreator(ICakeLog cakeLog, IFileSystem fileSystem, IGitHubClient githubClient)
         {
             m_CakeLog = cakeLog ?? throw new ArgumentNullException(nameof(cakeLog));
             m_FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            m_ClientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            m_GithubClient = githubClient ?? throw new ArgumentNullException(nameof(githubClient));
         }
 
 
-        public async Task<GitHubRelease> CreateRelease(string? userName, string apiToken, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
+        public async Task<GitHubRelease> CreateRelease(string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
         {
+            //TODO: Parameter checks
+
             if (settings is null)
                 throw new ArgumentNullException(nameof(settings));
             
@@ -37,7 +39,7 @@ namespace Cake.GitHub
 
             LogSettings(owner, repository, tagName, settings);
 
-            var release = await CreateNewRelease(userName: userName, apiToken: apiToken, owner: owner, repository: repository, tagName: tagName, settings: settings);
+            var release = await CreateNewRelease(owner: owner, repository: repository, tagName: tagName, settings: settings);
 
             return release;
         }
@@ -89,21 +91,17 @@ namespace Cake.GitHub
             }
         }
 
-        private async Task<GitHubRelease> CreateNewRelease(string userName, string apiToken, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
-        {
-            //TODO: Use CreateApiConnection()
-            var client = m_ClientFactory.CreateClient(settings.HostName, apiToken);
-
+        private async Task<GitHubRelease> CreateNewRelease(string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
+        {            
             // 
             // Check for existing release and delete if necessary
             //
-
-            var existingRelease = await TryGetReleaseAsync(client: client, owner: owner, repository: repository, tagName: tagName);
+            var existingRelease = await TryGetReleaseAsync(owner: owner, repository: repository, tagName: tagName);
             if (existingRelease != null)
             {
                 if (settings.Overwrite)
                 {
-                    await DeleteReleaseAsync(client, owner, repository, existingRelease);
+                    await DeleteReleaseAsync(owner, repository, existingRelease);
                 }
                 else
                 {
@@ -114,7 +112,6 @@ namespace Cake.GitHub
             //
             // Create new release
             //
-
             m_CakeLog.Verbose("Creating Release");
             var newRelease = new NewRelease(tagName)
             {
@@ -125,7 +122,7 @@ namespace Cake.GitHub
                 Prerelease = settings.Prerelease
             };
 
-            var createdRelease = await client.Repository.Release.Create(owner, repository, newRelease);
+            var createdRelease = await m_GithubClient.Repository.Release.Create(owner, repository, newRelease);
             m_CakeLog.Debug($"Created release with id '{createdRelease.Id}'");
 
             var result = GitHubRelease.FromRelease(createdRelease);
@@ -146,7 +143,7 @@ namespace Cake.GitHub
                         ContentType = "application/octet-stream",
                         RawData = stream
                     };
-                    var asset = await client.Repository.Release.UploadAsset(createdRelease, assetUpload);
+                    var asset = await m_GithubClient.Repository.Release.UploadAsset(createdRelease, assetUpload);
                     result.Add(GitHubReleaseAsset.FromReleaseAsset(asset));
                 }
             }
@@ -158,11 +155,11 @@ namespace Cake.GitHub
             return result;
         }
 
-        private async Task<Release?> TryGetReleaseAsync(IGitHubClient client, string owner, string repository, string tagName)
+        private async Task<Release?> TryGetReleaseAsync(string owner, string repository, string tagName)
         {
             try
             {
-                var release = await client.Repository.Release.Get(owner, repository, tagName);
+                var release = await m_GithubClient.Repository.Release.Get(owner, repository, tagName);
                 m_CakeLog.Verbose($"Found existing release for tag '{tagName}'");
                 return release;
             }
@@ -170,7 +167,7 @@ namespace Cake.GitHub
             {
                 // in case a release is a draft release, the tag has not been created yet and the release cannot be found via Get()
                 // to retrieve it, get all releases and search for the tag name                
-                var allReleases = await client.Repository.Release.GetAll(owner, repository);
+                var allReleases = await m_GithubClient.Repository.Release.GetAll(owner, repository);
                 var matchingReleases = allReleases.Where(x => StringComparer.Ordinal.Equals(x.TagName, tagName)).ToArray();
 
                 Release? release;
@@ -194,10 +191,10 @@ namespace Cake.GitHub
             }
         }
 
-        private async Task DeleteReleaseAsync(IGitHubClient client, string owner, string repository, Release release)
+        private async Task DeleteReleaseAsync(string owner, string repository, Release release)
         {
             m_CakeLog.Verbose($"Deleting existing release '{release.Name ?? release.TagName}'");
-            await client.Repository.Release.Delete(owner, repository, release.Id);
+            await m_GithubClient.Repository.Release.Delete(owner, repository, release.Id);
 
             // For non-draft releases, the tag must be deleted as well
             // Otherwise, when a new release is created with the same tag name, the existing tag will be reused
@@ -205,7 +202,7 @@ namespace Cake.GitHub
             if (!release.Draft)
             {
                 m_CakeLog.Debug($"Deleting tag '{release.TagName}'");
-                await client.Git.Reference.Delete(owner, repository, $"tags/{release.TagName}");
+                await m_GithubClient.Git.Reference.Delete(owner, repository, $"tags/{release.TagName}");
             }
         }
     }

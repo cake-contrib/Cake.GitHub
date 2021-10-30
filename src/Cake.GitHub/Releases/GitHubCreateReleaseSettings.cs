@@ -9,7 +9,7 @@ namespace Cake.GitHub
     /// <summary>
     /// Settings for creating a GitHub Release
     /// </summary>
-    public sealed class GitHubCreateReleaseSettings : GitHubSettings
+    public sealed class GitHubCreateReleaseSettings : GitHubSettingsBase
     {
         /// <summary>
         /// Gets or sets the Git commit it to create the tag from.
@@ -53,9 +53,6 @@ namespace Cake.GitHub
         public bool Overwrite { get; set; }
 
 
-        internal ICollection<FilePath> AssetsOrEmpty => Assets ?? Array.Empty<FilePath>();
-
- 
-       
+        internal ICollection<FilePath> AssetsOrEmpty => Assets ?? Array.Empty<FilePath>();       
     }
 }
