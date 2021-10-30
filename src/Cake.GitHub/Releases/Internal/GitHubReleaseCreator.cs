@@ -26,18 +26,18 @@ namespace Cake.GitHub
         }
 
 
-        public async Task<GitHubRelease> CreateRelease(GitHubCreateReleaseSettings settings)
+        public async Task<GitHubRelease> CreateRelease(string? userName, string apiToken, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
         {
             if (settings is null)
                 throw new ArgumentNullException(nameof(settings));
-
-            m_CakeLog.Information($"Creating new GitHub Release '{settings.NameOrTagName}'");
+            
+            m_CakeLog.Information($"Creating new GitHub Release '{(String.IsNullOrEmpty(settings.Name) ? tagName : settings.Name)}'");
 
             ValidateSettings(settings);
 
-            LogSettings(settings);
+            LogSettings(owner, repository, tagName, settings);
 
-            var release = await CreateNewRelease(settings);
+            var release = await CreateNewRelease(userName: userName, apiToken: apiToken, owner: owner, repository: repository, tagName: tagName, settings: settings);
 
             return release;
         }
@@ -65,14 +65,14 @@ namespace Cake.GitHub
             }
         }
 
-        private void LogSettings(GitHubCreateReleaseSettings settings)
+        private void LogSettings(string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
         {
             const int padding = -16;
 
             m_CakeLog.Debug("Creating GitHub Release with the following settings:");
-            m_CakeLog.Debug($"\t{nameof(settings.RepositoryName),padding}: '{settings.RepositoryName}'");
-            m_CakeLog.Debug($"\t{nameof(settings.RepositoryOwner),padding}: '{settings.RepositoryOwner}'");
-            m_CakeLog.Debug($"\t{nameof(settings.TagName),padding}: '{settings.TagName}'");
+            m_CakeLog.Debug($"\t{"Owner",padding}: '{owner}'");
+            m_CakeLog.Debug($"\t{"Repository",padding}: '{repository}'");
+            m_CakeLog.Debug($"\t{"TagName" ,padding}: '{tagName}'");
             m_CakeLog.Debug($"\t{nameof(settings.TargetCommitish),padding}: '{settings.TargetCommitish}'");
             m_CakeLog.Debug($"\t{nameof(settings.Name),padding}: '{settings.Name}'");
             m_CakeLog.Debug($"\t{nameof(settings.Body),padding}: '{settings.Body}'");
@@ -89,24 +89,25 @@ namespace Cake.GitHub
             }
         }
 
-        private async Task<GitHubRelease> CreateNewRelease(GitHubCreateReleaseSettings settings)
+        private async Task<GitHubRelease> CreateNewRelease(string userName, string apiToken, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
         {
-            var client = m_ClientFactory.CreateClient(settings.HostName, settings.AccessToken);
+            //TODO: Use CreateApiConnection()
+            var client = m_ClientFactory.CreateClient(settings.HostName, apiToken);
 
             // 
             // Check for existing release and delete if necessary
             //
 
-            var existingRelease = await TryGetReleaseAsync(client, settings);
+            var existingRelease = await TryGetReleaseAsync(client: client, owner: owner, repository: repository, tagName: tagName);
             if (existingRelease != null)
             {
                 if (settings.Overwrite)
                 {
-                    await DeleteReleaseAsync(client, settings, existingRelease);
+                    await DeleteReleaseAsync(client, owner, repository, existingRelease);
                 }
                 else
                 {
-                    throw new ReleaseExistsException($"A release for tag '{settings.TagName}' already exist in repository {settings.RepositoryOwner}/{settings.RepositoryName}");
+                    throw new ReleaseExistsException($"A release for tag '{tagName}' already exist in repository {owner}/{repository}");
                 }
             }
 
@@ -115,7 +116,7 @@ namespace Cake.GitHub
             //
 
             m_CakeLog.Verbose("Creating Release");
-            var newRelease = new NewRelease(settings.TagName)
+            var newRelease = new NewRelease(tagName)
             {
                 TargetCommitish = settings.TargetCommitish,
                 Name = settings.Name,
@@ -124,7 +125,7 @@ namespace Cake.GitHub
                 Prerelease = settings.Prerelease
             };
 
-            var createdRelease = await client.Repository.Release.Create(settings.RepositoryOwner, settings.RepositoryName, newRelease);
+            var createdRelease = await client.Repository.Release.Create(owner, repository, newRelease);
             m_CakeLog.Debug($"Created release with id '{createdRelease.Id}'");
 
             var result = GitHubRelease.FromRelease(createdRelease);
@@ -157,20 +158,20 @@ namespace Cake.GitHub
             return result;
         }
 
-        private async Task<Release?> TryGetReleaseAsync(IGitHubClient client, GitHubCreateReleaseSettings settings)
+        private async Task<Release?> TryGetReleaseAsync(IGitHubClient client, string owner, string repository, string tagName)
         {
             try
             {
-                var release = await client.Repository.Release.Get(settings.RepositoryOwner, settings.RepositoryName, settings.TagName);
-                m_CakeLog.Verbose($"Found existing release for tag '{settings.TagName}'");
+                var release = await client.Repository.Release.Get(owner, repository, tagName);
+                m_CakeLog.Verbose($"Found existing release for tag '{tagName}'");
                 return release;
             }
             catch (NotFoundException)
             {
                 // in case a release is a draft release, the tag has not been created yet and the release cannot be found via Get()
                 // to retrieve it, get all releases and search for the tag name                
-                var allReleases = await client.Repository.Release.GetAll(settings.RepositoryOwner, settings.RepositoryName);
-                var matchingReleases = allReleases.Where(x => StringComparer.Ordinal.Equals(x.TagName, settings.TagName)).ToArray();
+                var allReleases = await client.Repository.Release.GetAll(owner, repository);
+                var matchingReleases = allReleases.Where(x => StringComparer.Ordinal.Equals(x.TagName, tagName)).ToArray();
 
                 Release? release;
                 if(matchingReleases.Length == 0)
@@ -183,20 +184,20 @@ namespace Cake.GitHub
                 }
                 else 
                 {
-                    throw new AmbiguousTagNameException($"There are multiple existing releases for tag name '{settings.TagName}'");
+                    throw new AmbiguousTagNameException($"There are multiple existing releases for tag name '{tagName}'");
                 }
                 
                 if (release != null)
-                    m_CakeLog.Verbose($"Found existing draft release for tag '{settings.TagName}'");
+                    m_CakeLog.Verbose($"Found existing draft release for tag '{tagName}'");
 
                 return release;
             }
         }
 
-        private async Task DeleteReleaseAsync(IGitHubClient client, GitHubCreateReleaseSettings settings, Release release)
+        private async Task DeleteReleaseAsync(IGitHubClient client, string owner, string repository, Release release)
         {
             m_CakeLog.Verbose($"Deleting existing release '{release.Name ?? release.TagName}'");
-            await client.Repository.Release.Delete(settings.RepositoryOwner, settings.RepositoryName, release.Id);
+            await client.Repository.Release.Delete(owner, repository, release.Id);
 
             // For non-draft releases, the tag must be deleted as well
             // Otherwise, when a new release is created with the same tag name, the existing tag will be reused
@@ -204,7 +205,7 @@ namespace Cake.GitHub
             if (!release.Draft)
             {
                 m_CakeLog.Debug($"Deleting tag '{release.TagName}'");
-                await client.Git.Reference.Delete(settings.RepositoryOwner, settings.RepositoryName, $"tags/{release.TagName}");
+                await client.Git.Reference.Delete(owner, repository, $"tags/{release.TagName}");
             }
         }
     }
