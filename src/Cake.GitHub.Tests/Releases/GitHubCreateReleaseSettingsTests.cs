@@ -3,7 +3,7 @@
 namespace Cake.GitHub.Tests
 {
     /// <summary>
-    /// Tests for <see cref="GitHubReleaseCreateSettings"/>
+    /// Tests for <see cref="GitHubCreateReleaseSettings"/>
     /// </summary>
     public class GitHubCreateReleaseSettingsTests
     {

@@ -14,14 +14,14 @@ namespace Cake.GitHub.Tests
     /// <summary>
     /// Tests for <see cref="GitHubReleaseCreator"/>
     /// </summary>
-    public class GitHubReleaseCreatorTest
+    public class GitHubReleaseCreatorTests
     {
         private readonly XunitCakeLog m_TestLog;
         private readonly GitHubClientMock m_ClientMock;
         private readonly Mock<IFileSystem> m_FileSystemMock;
 
 
-        public GitHubReleaseCreatorTest(ITestOutputHelper testOutputHelper)
+        public GitHubReleaseCreatorTests(ITestOutputHelper testOutputHelper)
         {
             m_TestLog = new XunitCakeLog(testOutputHelper);
             m_ClientMock = new GitHubClientMock();
