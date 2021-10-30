@@ -25,9 +25,9 @@ namespace Cake.GitHub
             m_GithubClient = githubClient ?? throw new ArgumentNullException(nameof(githubClient));
         }
 
-        //TODO: Rename to CreateReleaseAsync()
-        public async Task<GitHubRelease> CreateRelease(string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
-        {            
+
+        public async Task<GitHubRelease> CreateReleaseAsync(string owner, string repository, string tagName, GitHubCreateReleaseSettings settings)
+        {
             if (String.IsNullOrWhiteSpace(owner))
                 throw new ArgumentException("Value must not be null or whitespace", nameof(owner));
 

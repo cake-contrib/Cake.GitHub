@@ -173,13 +173,13 @@ namespace Cake.GitHub.Tests
         [InlineData("owner", "repo", "", "tagName")]
         [InlineData("owner", "repo", " ", "tagName")]
         [InlineData("owner", "repo", "\t", "tagName")]
-        public async Task CreateRelease_checks_string_parameters_for_null_or_whitespace(string owner, string repo, string tagName, string expectedParameterName)
+        public async Task CreateReleaseAsync_checks_string_parameters_for_null_or_whitespace(string owner, string repo, string tagName, string expectedParameterName)
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner: owner, repository: repo, tagName: tagName, new GitHubCreateReleaseSettings()));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner: owner, repository: repo, tagName: tagName, new GitHubCreateReleaseSettings()));
 
             // ASSERT
             var argumentNullException = Assert.IsType<ArgumentException>(ex);
@@ -188,13 +188,13 @@ namespace Cake.GitHub.Tests
 
 
         [Fact]
-        public async Task CreateRelease_checks_settings_for_null()
+        public async Task CreateReleaseAsync_checks_settings_for_null()
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease("owner", "repo", "tag", settings: null!));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync("owner", "repo", "tag", settings: null!));
 
             // ASSERT
             var argumentNullException = Assert.IsType<ArgumentNullException>(ex);
@@ -204,7 +204,7 @@ namespace Cake.GitHub.Tests
 
         [Theory]
         [MemberData(nameof(CreateReleaseTestCases))]
-        public async Task CreateRelease_creates_the_expected_release(string id, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings, NewRelease expectedRelease, IReadOnlyList<ReleaseAssetUpload> expectedAssetUploads)
+        public async Task CreateReleaseAsync_creates_the_expected_release(string id, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings, NewRelease expectedRelease, IReadOnlyList<ReleaseAssetUpload> expectedAssetUploads)
         {
             // ARRANGE
             _ = id;
@@ -236,7 +236,7 @@ namespace Cake.GitHub.Tests
             }
 
             // ACT 
-            var release = await sut.CreateRelease(owner, repository, tagName, settings);
+            var release = await sut.CreateReleaseAsync(owner, repository, tagName, settings);
 
             // ASSERT
             Assert.NotNull(release);
@@ -255,7 +255,7 @@ namespace Cake.GitHub.Tests
         }
 
         [Fact]
-        public async Task CreateRelease_fails_if_asset_to_upload_does_not_exist()
+        public async Task CreateReleaseAsync_fails_if_asset_to_upload_does_not_exist()
         {
             // ARRANGE
             var assetPath = new FilePath("does-not-exist");
@@ -275,14 +275,14 @@ namespace Cake.GitHub.Tests
             };
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner, repository, tagName, settings));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
 
             // ASSERT
             Assert.IsType<FileNotFoundException>(ex);
         }
 
         [Fact]
-        public async Task CreateRelease_fails_if_multiple_assets_with_the_same_name_are_added()
+        public async Task CreateReleaseAsync_fails_if_multiple_assets_with_the_same_name_are_added()
         {
             // ARRANGE
             var asset1 = new FilePath("asset1.zip");
@@ -307,7 +307,7 @@ namespace Cake.GitHub.Tests
             };
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner, repository, tagName, settings));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
 
             // ASSERT
             Assert.IsType<AssetConflictException>(ex);
@@ -315,7 +315,7 @@ namespace Cake.GitHub.Tests
         }
 
         [Fact]
-        public async Task CreateRelease_throws_ReleaseExistsException_if_a_release_with_the_specified_tag_name_already_exists()
+        public async Task CreateReleaseAsync_throws_ReleaseExistsException_if_a_release_with_the_specified_tag_name_already_exists()
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
@@ -330,7 +330,7 @@ namespace Cake.GitHub.Tests
                 .ReturnsAsync(new TestRelease() { Id = 123, TagName = tagName });
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner, repository, tagName, settings));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
 
             // ASSERT
             Assert.IsType<ReleaseExistsException>(ex);
@@ -340,7 +340,7 @@ namespace Cake.GitHub.Tests
         }
 
         [Fact]
-        public async Task CreateRelease_throws_ReleaseExistsException_if_a_draf_release_with_the_specified_tag_name_already_exists()
+        public async Task CreateReleaseAsync_throws_ReleaseExistsException_if_a_draf_release_with_the_specified_tag_name_already_exists()
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
@@ -360,7 +360,7 @@ namespace Cake.GitHub.Tests
                 .ReturnsAsync(new[] { new TestRelease() { Id = 123, Draft = true, TagName = tagName } });
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner, repository, tagName, settings));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
 
             // ASSERT
             Assert.IsType<ReleaseExistsException>(ex);
@@ -372,7 +372,7 @@ namespace Cake.GitHub.Tests
 
 
         [Fact]
-        public async Task CreateRelease_deletes_an_existing_release_with_the_same_tag_name_if_overwrite_is_set_to_true()
+        public async Task CreateReleaseAsync_deletes_an_existing_release_with_the_same_tag_name_if_overwrite_is_set_to_true()
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
@@ -403,7 +403,7 @@ namespace Cake.GitHub.Tests
 
 
             // ACT 
-            var release = await sut.CreateRelease(owner, repository, tagName, settings);
+            var release = await sut.CreateReleaseAsync(owner, repository, tagName, settings);
 
             // ASSERT
             Assert.NotNull(release);
@@ -417,7 +417,7 @@ namespace Cake.GitHub.Tests
         }
 
         [Fact]
-        public async Task CreateRelease_deletes_an_existing_draft_release_with_the_same_tag_name_if_overwrite_is_set_to_true()
+        public async Task CreateReleaseAsync_deletes_an_existing_draft_release_with_the_same_tag_name_if_overwrite_is_set_to_true()
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
@@ -452,7 +452,7 @@ namespace Cake.GitHub.Tests
                 .ThrowsAsync(new ApiValidationException());
 
             // ACT 
-            var release = await sut.CreateRelease(owner, repository, tagName, settings);
+            var release = await sut.CreateReleaseAsync(owner, repository, tagName, settings);
 
             // ASSERT
             Assert.NotNull(release);
@@ -465,7 +465,7 @@ namespace Cake.GitHub.Tests
         }
 
         [Fact]
-        public async Task CreateRelease_throws_AmbiguousTagNameException_if_multiple_draft_releases_with_the_same_tag_name_exist()
+        public async Task CreateReleaseAsync_throws_AmbiguousTagNameException_if_multiple_draft_releases_with_the_same_tag_name_exist()
         {
             // ARRANGE
             var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
@@ -488,7 +488,7 @@ namespace Cake.GitHub.Tests
                 .ReturnsAsync(new[] { existingRelease1, existingRelease2 });
 
             // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner, repository, tagName, settings));
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
 
             // ASSERT
             Assert.IsType<AmbiguousTagNameException>(ex);

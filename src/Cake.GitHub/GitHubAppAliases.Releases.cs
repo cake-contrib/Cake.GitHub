@@ -27,7 +27,7 @@ namespace Cake.GitHub
             var githubClient = new GitHubClient(connection);
             var releaseCreator = new GitHubReleaseCreator(context.Log, context.FileSystem, githubClient);
 
-            return await releaseCreator.CreateRelease(
+            return await releaseCreator.CreateReleaseAsync(
                 owner: owner,
                 repository: repository,
                 tagName: tagName,
