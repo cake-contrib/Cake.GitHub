@@ -161,6 +161,48 @@ namespace Cake.GitHub.Tests
 
 
         [Theory]
+        [InlineData(null, "repo", "tag", "owner")]
+        [InlineData("", "repo", "tag", "owner")]
+        [InlineData(" ", "repo", "tag", "owner")]
+        [InlineData("\t", "repo", "tag", "owner")]
+        [InlineData("owner", null, "tag", "repository")]
+        [InlineData("owner", "", "tag", "repository")]
+        [InlineData("owner", " ", "tag", "repository")]
+        [InlineData("owner", "\t", "tag", "repository")]
+        [InlineData("owner", "repo", null, "tagName")]
+        [InlineData("owner", "repo", "", "tagName")]
+        [InlineData("owner", "repo", " ", "tagName")]
+        [InlineData("owner", "repo", "\t", "tagName")]
+        public async Task CreateRelease_checks_string_parameters_for_null_or_whitespace(string owner, string repo, string tagName, string expectedParameterName)
+        {
+            // ARRANGE
+            var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
+
+            // ACT 
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease(owner: owner, repository: repo, tagName: tagName, new GitHubCreateReleaseSettings()));
+
+            // ASSERT
+            var argumentNullException = Assert.IsType<ArgumentException>(ex);
+            Assert.Equal(expectedParameterName, argumentNullException.ParamName);
+        }
+
+
+        [Fact]
+        public async Task CreateRelease_checks_settings_for_null()
+        {
+            // ARRANGE
+            var sut = new GitHubReleaseCreator(m_TestLog, m_FileSystemMock.Object, m_ClientMock.Object);
+
+            // ACT 
+            var ex = await Record.ExceptionAsync(async () => await sut.CreateRelease("owner", "repo", "tag", settings: null!));
+
+            // ASSERT
+            var argumentNullException = Assert.IsType<ArgumentNullException>(ex);
+            Assert.Equal("settings", argumentNullException.ParamName);
+        }
+
+
+        [Theory]
         [MemberData(nameof(CreateReleaseTestCases))]
         public async Task CreateRelease_creates_the_expected_release(string id, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings, NewRelease expectedRelease, IReadOnlyList<ReleaseAssetUpload> expectedAssetUploads)
         {
