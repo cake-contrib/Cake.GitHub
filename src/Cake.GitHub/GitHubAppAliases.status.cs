@@ -15,7 +15,11 @@
         /// Updates the status for a specific build.
         /// </summary>
         /// <param name="context">The Cake context</param>
-        /// <param name="file">The app package.</param>
+        /// <param name="userName">The user name to use for authentication (pass <c>null</c> when using an access token).</param>
+        /// <param name="apiToken">The access token or password to use for authentication.</param>
+        /// <param name="owner">The owner (user or group) of the repository to report the status for.</param>
+        /// <param name="repository">The name of the repository to report the status for.</param>
+        /// <param name="reference">The git reference to report the status for.</param>
         /// <param name="settings">The status settings.</param>
         /// <example>
         /// <code>

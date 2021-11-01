@@ -5,6 +5,9 @@
     /// </summary>
     public sealed class AssetConflictException : GitHubReleaseException
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="AssetConflictException"/>.
+        /// </summary>
         public AssetConflictException(string message) : base(message)
         { }
     }

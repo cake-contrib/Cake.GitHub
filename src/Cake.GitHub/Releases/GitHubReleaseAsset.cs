@@ -34,6 +34,14 @@ namespace Cake.GitHub
         public string BrowserDownloadUrl { get; }
 
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="GitHubReleaseAsset"/>.
+        /// </summary>
+        /// <param name="id">The asset's id</param>
+        /// <param name="name">The asset's file name</param>
+        /// <param name="size">The asset's size in bytes</param>
+        /// <param name="contentType">The asset's content type</param>
+        /// <param name="browserDownloadUrl">The asset's download url</param>
         public GitHubReleaseAsset(int id, string name, long size, string contentType, string browserDownloadUrl)
         {
             Id = id;

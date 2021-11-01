@@ -5,6 +5,9 @@
     /// </summary>
     public class AmbiguousTagNameException : GitHubReleaseException
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="AmbiguousTagNameException"/>.
+        /// </summary>
         public AmbiguousTagNameException(string message) : base(message)
         { }
     }
