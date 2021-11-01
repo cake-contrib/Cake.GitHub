@@ -28,7 +28,8 @@ namespace Cake.GitHub.Tests
             m_FileSystemMock = new Mock<IFileSystem>(MockBehavior.Strict);
         }
 
-
+// Disable nullable reference types for xunit data source, otherwise there is a compile error when building in VS 2017
+#nullable disable       
         public static IEnumerable<object[]> CreateReleaseTestCases()
         {
             static object[] TestCase(string id, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings, NewRelease expectedRelease, IReadOnlyList<ReleaseAssetUpload> expectedAssetUploads)
@@ -156,7 +157,7 @@ namespace Cake.GitHub.Tests
             );
 
         }
-
+#nullable enable
 
         [Theory]
         [InlineData(null, "repo", "tag", "owner")]
