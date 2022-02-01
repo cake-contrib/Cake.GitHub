@@ -86,13 +86,7 @@ namespace Cake.GitHub
         }
 
 
-        internal void Add(GitHubReleaseAsset asset)
-        {
-            if (asset is null)
-                throw new ArgumentNullException(nameof(asset));
-
-            _assets.Add(asset);
-        }
+        internal void Add(GitHubReleaseAsset asset) => _assets.Add(asset);
 
         /// <summary>
         /// Converts a Octokit <see cref="Release" /> to a <see cref="GitHubRelease"/>

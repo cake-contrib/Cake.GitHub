@@ -57,9 +57,6 @@ namespace Cake.GitHub
         /// </summary>
         internal static GitHubReleaseAsset FromReleaseAsset(ReleaseAsset asset)
         {
-            if (asset is null)
-                throw new ArgumentNullException(nameof(asset));
-
             return new GitHubReleaseAsset(
                 id: asset.Id,
                 name: asset.Name,
