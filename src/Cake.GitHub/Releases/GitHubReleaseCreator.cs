@@ -18,9 +18,9 @@ namespace Cake.GitHub
         
         public GitHubReleaseCreator(ICakeLog cakeLog, IFileSystem fileSystem, IGitHubClient githubClient)
         {
-            _cakeLog = cakeLog ?? throw new ArgumentNullException(nameof(cakeLog));
-            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            _githubClient = githubClient ?? throw new ArgumentNullException(nameof(githubClient));
+            _cakeLog = cakeLog;
+            _fileSystem = fileSystem;
+            _githubClient = githubClient;
         }
 
 
@@ -34,10 +34,6 @@ namespace Cake.GitHub
 
             if (String.IsNullOrWhiteSpace(tagName))
                 throw new ArgumentException("Value must not be null or whitespace", nameof(tagName));
-
-            if (settings is null)
-                throw new ArgumentNullException(nameof(settings));
-            
 
             _cakeLog.Information($"Creating new GitHub Release '{(String.IsNullOrEmpty(settings.Name) ? tagName : settings.Name)}'");
 

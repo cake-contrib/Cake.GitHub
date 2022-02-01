@@ -185,22 +185,6 @@ namespace Cake.GitHub.Tests
             Assert.Equal(expectedParameterName, argumentNullException.ParamName);
         }
 
-
-        [Fact]
-        public async Task CreateReleaseAsync_checks_settings_for_null()
-        {
-            // ARRANGE
-            var sut = new GitHubReleaseCreator(_testLog, _fileSystemMock.Object, _clientMock.Object);
-
-            // ACT 
-            var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync("owner", "repo", "tag", settings: null!));
-
-            // ASSERT
-            var argumentNullException = Assert.IsType<ArgumentNullException>(ex);
-            Assert.Equal("settings", argumentNullException.ParamName);
-        }
-
-
         [Theory]
         [MemberData(nameof(CreateReleaseTestCases))]
         public async Task CreateReleaseAsync_creates_the_expected_release(string id, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings, NewRelease expectedRelease, IReadOnlyList<ReleaseAssetUpload> expectedAssetUploads)

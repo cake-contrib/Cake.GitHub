@@ -92,10 +92,7 @@ namespace Cake.GitHub
         /// Converts a Octokit <see cref="Release" /> to a <see cref="GitHubRelease"/>
         /// </summary>
         internal static GitHubRelease FromRelease(Release release)
-        {
-            if (release is null)
-                throw new ArgumentNullException(nameof(release));
-
+        {            
             var githubRelease = new GitHubRelease(
                 id: release.Id,
                 htmlUrl: release.HtmlUrl,
