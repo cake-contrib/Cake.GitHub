@@ -12,7 +12,7 @@ namespace Cake.GitHub.Tests
     internal static class MoqExtensions
     {
         public static IReturnsResult<TMock> ThrowsNotFoundAsync<TMock, TResult>(this IReturns<TMock, Task<TResult>> mock) where TMock : class =>
-            mock.ThrowsAsync(new NotFoundException("", HttpStatusCode.NotFound));
+            mock.ThrowsAsync(new NotFoundException(string.Empty, HttpStatusCode.NotFound));
 
         public static IReturnsResult<IReleasesClient> ReturnsEmptyListAsync(this IReturns<IReleasesClient, Task<IReadOnlyList<Release>>> mock) =>
             mock.ReturnsAsync(Array.Empty<Release>());
