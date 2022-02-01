@@ -101,14 +101,11 @@ namespace Cake.GitHub
             var existingRelease = await TryGetReleaseAsync(owner: owner, repository: repository, tagName: tagName);
             if (existingRelease != null)
             {
-                if (settings.Overwrite)
-                {
-                    await DeleteReleaseAsync(owner, repository, existingRelease);
-                }
-                else
+                if (!settings.Overwrite)
                 {
                     throw new ReleaseExistsException($"A release for tag '{tagName}' already exist in repository {owner}/{repository}");
                 }
+                await DeleteReleaseAsync(owner, repository, existingRelease);
             }
 
             //
