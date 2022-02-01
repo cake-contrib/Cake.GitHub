@@ -25,7 +25,7 @@ namespace Cake.GitHub
         [CakeMethodAlias]
         public static async Task<GitHubRelease> GitHubCreateReleaseAsync(
             this ICakeContext context,
-            string userName,
+            string? userName,
             string apiToken,
             string owner,
             string repository,
