@@ -10,7 +10,7 @@ namespace Cake.GitHub
     /// </summary>
     public sealed class GitHubRelease
     {
-        private readonly List<GitHubReleaseAsset> m_Assets = new List<GitHubReleaseAsset>();
+        private readonly List<GitHubReleaseAsset> _assets = new List<GitHubReleaseAsset>();
 
         /// <summary>
         /// Gets the release's id
@@ -65,7 +65,7 @@ namespace Cake.GitHub
         /// <summary>
         /// Gets the release's assets.
         /// </summary>
-        public IReadOnlyList<GitHubReleaseAsset> Assets => m_Assets;
+        public IReadOnlyList<GitHubReleaseAsset> Assets => _assets;
 
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Cake.GitHub
             if (asset is null)
                 throw new ArgumentNullException(nameof(asset));
 
-            m_Assets.Add(asset);
+            _assets.Add(asset);
         }
 
         /// <summary>

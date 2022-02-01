@@ -7,26 +7,26 @@ namespace Cake.GitHub.Tests
     {
         public class RepositoriesClientMock
         {
-            private readonly Mock<IRepositoriesClient> m_Mock = new Mock<IRepositoriesClient>(MockBehavior.Strict);
+            private readonly Mock<IRepositoriesClient> _mock = new Mock<IRepositoriesClient>(MockBehavior.Strict);
 
-            public IRepositoriesClient Object => m_Mock.Object;
+            public IRepositoriesClient Object => _mock.Object;
 
             public Mock<IReleasesClient> Release { get; } = new Mock<IReleasesClient>(MockBehavior.Strict);
 
 
             public RepositoriesClientMock()
             {
-                m_Mock.Setup(x => x.Release).Returns(Release.Object);
+                _mock.Setup(x => x.Release).Returns(Release.Object);
 
             }
         }
 
         public class GitDatabaseClientMock
         {
-            private readonly Mock<IGitDatabaseClient> m_Mock = new Mock<IGitDatabaseClient>(MockBehavior.Strict);
+            private readonly Mock<IGitDatabaseClient> _mock = new Mock<IGitDatabaseClient>(MockBehavior.Strict);
 
 
-            public IGitDatabaseClient Object => m_Mock.Object;
+            public IGitDatabaseClient Object => _mock.Object;
 
 
             public Mock<IReferencesClient> Reference { get; } = new Mock<IReferencesClient>(MockBehavior.Strict);
@@ -34,14 +34,14 @@ namespace Cake.GitHub.Tests
 
             public GitDatabaseClientMock()
             {
-                m_Mock.Setup(x => x.Reference).Returns(Reference.Object);
+                _mock.Setup(x => x.Reference).Returns(Reference.Object);
             }
         }
 
-        private readonly Mock<IGitHubClient> m_Mock = new Mock<IGitHubClient>(MockBehavior.Strict);
+        private readonly Mock<IGitHubClient> _mock = new Mock<IGitHubClient>(MockBehavior.Strict);
 
 
-        public IGitHubClient Object => m_Mock.Object;
+        public IGitHubClient Object => _mock.Object;
 
 
         public RepositoriesClientMock Repository { get; } = new RepositoriesClientMock();
@@ -51,8 +51,8 @@ namespace Cake.GitHub.Tests
 
         public GitHubClientMock()
         {
-            m_Mock.Setup(x => x.Repository).Returns(Repository.Object);
-            m_Mock.Setup(x => x.Git).Returns(Git.Object);
+            _mock.Setup(x => x.Repository).Returns(Repository.Object);
+            _mock.Setup(x => x.Git).Returns(Git.Object);
         }
     }
 }

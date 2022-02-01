@@ -9,7 +9,7 @@ namespace Cake.GitHub.Tests
     /// </summary>
     internal class XunitCakeLog : ICakeLog
     {
-        private readonly ITestOutputHelper m_TestOutputHelper;
+        private readonly ITestOutputHelper _testOutputHelper;
 
 
         /// <inheritdoc />
@@ -18,14 +18,14 @@ namespace Cake.GitHub.Tests
 
         public XunitCakeLog(ITestOutputHelper testOutputHelper)
         {
-            m_TestOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
+            _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
         }
 
         /// <inheritdoc />
         public void Write(Verbosity verbosity, LogLevel level, string format, params object[] args)
         {
             var message = $"{level.ToString().ToUpper(),-12} | {String.Format(format, args)}";
-            m_TestOutputHelper.WriteLine(message);
+            _testOutputHelper.WriteLine(message);
         }
     }
 }

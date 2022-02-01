@@ -11,16 +11,16 @@ namespace Cake.GitHub
 {
     internal sealed class GitHubReleaseCreator
     {
-        private readonly ICakeLog m_CakeLog;
-        private readonly IFileSystem m_FileSystem;
-        private readonly IGitHubClient m_GithubClient;
+        private readonly ICakeLog _cakeLog;
+        private readonly IFileSystem _fileSystem;
+        private readonly IGitHubClient _githubClient;
         
         
         public GitHubReleaseCreator(ICakeLog cakeLog, IFileSystem fileSystem, IGitHubClient githubClient)
         {
-            m_CakeLog = cakeLog ?? throw new ArgumentNullException(nameof(cakeLog));
-            m_FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-            m_GithubClient = githubClient ?? throw new ArgumentNullException(nameof(githubClient));
+            _cakeLog = cakeLog ?? throw new ArgumentNullException(nameof(cakeLog));
+            _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+            _githubClient = githubClient ?? throw new ArgumentNullException(nameof(githubClient));
         }
 
 
@@ -39,7 +39,7 @@ namespace Cake.GitHub
                 throw new ArgumentNullException(nameof(settings));
             
 
-            m_CakeLog.Information($"Creating new GitHub Release '{(String.IsNullOrEmpty(settings.Name) ? tagName : settings.Name)}'");
+            _cakeLog.Information($"Creating new GitHub Release '{(String.IsNullOrEmpty(settings.Name) ? tagName : settings.Name)}'");
 
             ValidateSettings(settings);
 
@@ -53,13 +53,13 @@ namespace Cake.GitHub
 
         private void ValidateSettings(GitHubCreateReleaseSettings settings)
         {
-            m_CakeLog.Debug("Validating GitHub Release settings");
+            _cakeLog.Debug("Validating GitHub Release settings");
 
             var assetNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var filePath in settings.AssetsOrEmpty)
             {
-                var file = m_FileSystem.GetFile(filePath);
+                var file = _fileSystem.GetFile(filePath);
 
                 if (!file.Exists)
                     throw new FileNotFoundException($"Cannot create GitHub Release with asset '{filePath}' because the file does not exist");
@@ -77,22 +77,22 @@ namespace Cake.GitHub
         {
             const int padding = -16;
 
-            m_CakeLog.Debug("Creating GitHub Release with the following settings:");
-            m_CakeLog.Debug($"\t{"Owner",padding}: '{owner}'");
-            m_CakeLog.Debug($"\t{"Repository",padding}: '{repository}'");
-            m_CakeLog.Debug($"\t{"TagName" ,padding}: '{tagName}'");
-            m_CakeLog.Debug($"\t{nameof(settings.TargetCommitish),padding}: '{settings.TargetCommitish}'");
-            m_CakeLog.Debug($"\t{nameof(settings.Name),padding}: '{settings.Name}'");
-            m_CakeLog.Debug($"\t{nameof(settings.Body),padding}: '{settings.Body}'");
-            m_CakeLog.Debug($"\t{nameof(settings.Draft),padding}: {settings.Draft}");
-            m_CakeLog.Debug($"\t{nameof(settings.Overwrite),padding}: {settings.Overwrite}");
-            m_CakeLog.Debug($"\t{nameof(settings.Prerelease),padding}: {settings.Prerelease}");
+            _cakeLog.Debug("Creating GitHub Release with the following settings:");
+            _cakeLog.Debug($"\t{"Owner",padding}: '{owner}'");
+            _cakeLog.Debug($"\t{"Repository",padding}: '{repository}'");
+            _cakeLog.Debug($"\t{"TagName" ,padding}: '{tagName}'");
+            _cakeLog.Debug($"\t{nameof(settings.TargetCommitish),padding}: '{settings.TargetCommitish}'");
+            _cakeLog.Debug($"\t{nameof(settings.Name),padding}: '{settings.Name}'");
+            _cakeLog.Debug($"\t{nameof(settings.Body),padding}: '{settings.Body}'");
+            _cakeLog.Debug($"\t{nameof(settings.Draft),padding}: {settings.Draft}");
+            _cakeLog.Debug($"\t{nameof(settings.Overwrite),padding}: {settings.Overwrite}");
+            _cakeLog.Debug($"\t{nameof(settings.Prerelease),padding}: {settings.Prerelease}");
             if (settings.AssetsOrEmpty.Any())
             {
-                m_CakeLog.Debug($"\t{nameof(settings.Assets),padding}:");
+                _cakeLog.Debug($"\t{nameof(settings.Assets),padding}:");
                 foreach (var asset in settings.AssetsOrEmpty)
                 {
-                    m_CakeLog.Debug($"\t\t- {asset}");
+                    _cakeLog.Debug($"\t\t- {asset}");
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace Cake.GitHub
             //
             // Create new release
             //
-            m_CakeLog.Verbose("Creating Release");
+            _cakeLog.Verbose("Creating Release");
             var newRelease = new NewRelease(tagName)
             {
                 TargetCommitish = settings.TargetCommitish,
@@ -128,8 +128,8 @@ namespace Cake.GitHub
                 Prerelease = settings.Prerelease
             };
 
-            var createdRelease = await m_GithubClient.Repository.Release.Create(owner, repository, newRelease);
-            m_CakeLog.Debug($"Created release with id '{createdRelease.Id}'");
+            var createdRelease = await _githubClient.Repository.Release.Create(owner, repository, newRelease);
+            _cakeLog.Debug($"Created release with id '{createdRelease.Id}'");
 
             var result = GitHubRelease.FromRelease(createdRelease);
 
@@ -138,23 +138,23 @@ namespace Cake.GitHub
             //
             if (settings.AssetsOrEmpty.Count > 0)
             {
-                m_CakeLog.Verbose("Uploading Release Assets");
+                _cakeLog.Verbose("Uploading Release Assets");
                 foreach (var filePath in settings.AssetsOrEmpty)
                 {
-                    m_CakeLog.Debug($"Uploading asset '{filePath}'");
-                    using var stream = m_FileSystem.GetFile(filePath).OpenRead();
+                    _cakeLog.Debug($"Uploading asset '{filePath}'");
+                    using var stream = _fileSystem.GetFile(filePath).OpenRead();
                     var assetUpload = new ReleaseAssetUpload()
                     {
                         FileName = filePath.GetFilename().ToString(),
                         ContentType = "application/octet-stream",
                         RawData = stream
                     };
-                    var asset = await m_GithubClient.Repository.Release.UploadAsset(createdRelease, assetUpload);
+                    var asset = await _githubClient.Repository.Release.UploadAsset(createdRelease, assetUpload);
                     result.Add(GitHubReleaseAsset.FromReleaseAsset(asset));
                 }
             }
 
-            m_CakeLog.Verbose(settings.AssetsOrEmpty.Count > 0
+            _cakeLog.Verbose(settings.AssetsOrEmpty.Count > 0
                 ? $"Successfully created new GitHub Release and uploaded '{settings.AssetsOrEmpty.Count}' assets"
                 : "Successfully created new GitHub Release");
 
@@ -165,15 +165,15 @@ namespace Cake.GitHub
         {
             try
             {
-                var release = await m_GithubClient.Repository.Release.Get(owner, repository, tagName);
-                m_CakeLog.Verbose($"Found existing release for tag '{tagName}'");
+                var release = await _githubClient.Repository.Release.Get(owner, repository, tagName);
+                _cakeLog.Verbose($"Found existing release for tag '{tagName}'");
                 return release;
             }
             catch (NotFoundException)
             {
                 // in case a release is a draft release, the tag has not been created yet and the release cannot be found via Get()
                 // to retrieve it, get all releases and search for the tag name                
-                var allReleases = await m_GithubClient.Repository.Release.GetAll(owner, repository);
+                var allReleases = await _githubClient.Repository.Release.GetAll(owner, repository);
                 var matchingReleases = allReleases.Where(x => StringComparer.Ordinal.Equals(x.TagName, tagName)).ToArray();
 
                 Release? release;
@@ -191,7 +191,7 @@ namespace Cake.GitHub
                 }
                 
                 if (release != null)
-                    m_CakeLog.Verbose($"Found existing draft release for tag '{tagName}'");
+                    _cakeLog.Verbose($"Found existing draft release for tag '{tagName}'");
 
                 return release;
             }
@@ -199,16 +199,16 @@ namespace Cake.GitHub
 
         private async Task DeleteReleaseAsync(string owner, string repository, Release release)
         {
-            m_CakeLog.Verbose($"Deleting existing release '{release.Name ?? release.TagName}'");
-            await m_GithubClient.Repository.Release.Delete(owner, repository, release.Id);
+            _cakeLog.Verbose($"Deleting existing release '{release.Name ?? release.TagName}'");
+            await _githubClient.Repository.Release.Delete(owner, repository, release.Id);
 
             // For non-draft releases, the tag must be deleted as well
             // Otherwise, when a new release is created with the same tag name, the existing tag will be reused
             // and the new release might point to the wrong commit
             if (!release.Draft)
             {
-                m_CakeLog.Debug($"Deleting tag '{release.TagName}'");
-                await m_GithubClient.Git.Reference.Delete(owner, repository, $"tags/{release.TagName}");
+                _cakeLog.Debug($"Deleting tag '{release.TagName}'");
+                await _githubClient.Git.Reference.Delete(owner, repository, $"tags/{release.TagName}");
             }
         }
     }
