@@ -16,18 +16,18 @@ namespace Cake.GitHub
         /// <para />
         /// <c>http://ci.example.com/user/repo/build/sha</c>
         /// </summary>
-        public string TargetUrl { get; set; }
+        public string? TargetUrl { get; set; }
 
         /// <summary>
         /// A short description of the status.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// A string label to differentiate this status from the status of other systems.
         /// <para />
         /// The default value is <c>default</c>.
         /// </summary>
-        public string Context { get; set; }
+        public string? Context { get; set; }
     }
 }
