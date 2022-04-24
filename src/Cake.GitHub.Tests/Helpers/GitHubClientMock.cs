@@ -38,6 +38,23 @@ namespace Cake.GitHub.Tests
             }
         }
 
+        public class IssuesClientMock
+        {
+            public Mock<IIssuesClient> Mock { get; }
+
+            public IIssuesClient Object => Mock.Object;
+
+            public Mock<IMilestonesClient> Milestone { get; } = new Mock<IMilestonesClient>(MockBehavior.Strict);
+
+
+            public IssuesClientMock()
+            {
+                Mock = new Mock<IIssuesClient>(MockBehavior.Strict);
+
+                Mock.Setup(x => x.Milestone).Returns(Milestone.Object);
+            }
+        }
+
         private readonly Mock<IGitHubClient> _mock = new Mock<IGitHubClient>(MockBehavior.Strict);
 
 
@@ -48,11 +65,14 @@ namespace Cake.GitHub.Tests
 
         public GitDatabaseClientMock Git { get; } = new GitDatabaseClientMock();
 
+        public IssuesClientMock Issues { get; } = new IssuesClientMock();
+
 
         public GitHubClientMock()
         {
             _mock.Setup(x => x.Repository).Returns(Repository.Object);
             _mock.Setup(x => x.Git).Returns(Git.Object);
+            _mock.Setup(x => x.Issue).Returns(Issues.Object);
         }
     }
 }
