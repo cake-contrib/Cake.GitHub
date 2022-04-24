@@ -293,5 +293,44 @@ namespace Cake.GitHub.Tests
             _clientMock.Issues.Mock.Verify(x => x.Update(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IssueUpdate>()), Times.Once);
             _clientMock.Issues.Mock.Verify(x => x.Update(owner, repo, issueNumber, It.Is<IssueUpdate>(x => x.Milestone == 2)), Times.Once);
         }
+
+        [Fact]
+        public async Task SetMilestoneAsync_creates_a_new_milestone_if_CreateMilestone_setting_is_true()
+        {
+            // ARRANGE
+            var owner = "owner";
+            var repo = "repo";
+            var issueNumber = 23;
+            var sut = new GitHubIssueUpdater(_testLog, _clientMock.Object);
+
+            _clientMock.Issues.Mock
+                .Setup(x => x.Get(owner, repo, issueNumber))
+                .ReturnsAsync(new TestIssue() { Number = issueNumber });
+
+            _clientMock.Issues.Milestone
+                .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
+                .ReturnsEmptyListAsync();
+
+            _clientMock.Issues.Milestone
+                .Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<NewMilestone>()))
+                .ReturnsAsync((string repo, string owner, NewMilestone newMilestone) => new TestMilestone() { Number = 2, Title = newMilestone.Title });
+
+            _clientMock.Issues.Mock.SetupUpdate();
+
+            var settings = new GitHubSetMilestoneSettings()
+            {
+                CreateMilestone = true
+            };
+
+            // ACT 
+            await sut.SetMilestoneAsync(owner: owner, repository: repo, number: issueNumber, milestoneTitle: "Milestone 2", settings);
+
+            // ASSERT
+            _clientMock.Issues.Mock.Verify(x => x.Update(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IssueUpdate>()), Times.Once);
+            _clientMock.Issues.Mock.Verify(x => x.Update(owner, repo, issueNumber, It.Is<IssueUpdate>(x => x.Milestone == 2)), Times.Once);
+
+            _clientMock.Issues.Milestone.Verify(x => x.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<NewMilestone>()), Times.Once);
+            _clientMock.Issues.Milestone.Verify(x => x.Create(owner, repo, It.Is<NewMilestone>(x => x.Title == "Milestone 2")), Times.Once);
+        }
     }
 }

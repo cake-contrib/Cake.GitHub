@@ -26,5 +26,8 @@ namespace Cake.GitHub.Tests
 
         public static IReturnsResult<IMilestonesClient> ReturnsMilestonesAsync(this IReturns<IMilestonesClient, Task<IReadOnlyList<Milestone>>> mock, params Milestone[] milestones) =>
             mock.ReturnsAsync(milestones);
+
+        public static IReturnsResult<IMilestonesClient> ReturnsEmptyListAsync(this IReturns<IMilestonesClient, Task<IReadOnlyList<Milestone>>> mock) =>
+            mock.ReturnsAsync(Array.Empty<Milestone>());
     }
 }

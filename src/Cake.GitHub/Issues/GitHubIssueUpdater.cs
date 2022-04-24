@@ -41,7 +41,7 @@ namespace Cake.GitHub
             var displayName = $"{(issue.PullRequest == null ? "Issue" : "Pull Request")} {number}";
 
             // Get the milestone matching the specified title
-            var milestone = await GetMilestoneByTitleAsync(owner, repository, milestoneTitle);
+            var milestone = await GetOrCreateMilestoneAsync(owner, repository, milestoneTitle, settings);
 
 
             // Update Issue or PR
@@ -70,7 +70,7 @@ namespace Cake.GitHub
         }
 
 
-        private async Task<Milestone> GetMilestoneByTitleAsync(string owner, string repository, string milestoneTitle)
+        private async Task<Milestone> GetOrCreateMilestoneAsync(string owner, string repository, string milestoneTitle, GitHubSetMilestoneSettings settings)
         {
             _cakeLog.Verbose($"Looking up Milestone with title '{milestoneTitle}'");
 
@@ -79,10 +79,24 @@ namespace Cake.GitHub
             var milestone = milestones.SingleOrDefault(x => StringComparer.Ordinal.Equals(x.Title, milestoneTitle));
 
             if (milestone == null)
-                throw new MilestoneNotFoundException($"No Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}");
-
-            _cakeLog.Verbose($"Found Milestone {milestone.Number} with matching title");
-            return milestone;
+            {
+                if (settings.CreateMilestone)
+                {
+                    _cakeLog.Verbose($"No Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}. Creating new milestone.");
+                    milestone = await _githubClient.Issue.Milestone.Create(owner, repository, new NewMilestone(milestoneTitle));
+                    _cakeLog.Verbose($"Created Milestone {milestone.Number}");
+                    return milestone;
+                }
+                else
+                {
+                    throw new MilestoneNotFoundException($"No Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}");
+                }
+            }
+            else
+            {
+                _cakeLog.Verbose($"Found Milestone {milestone.Number} with matching title");
+                return milestone;
+            }
         }
 
         private async Task<Issue> GetIssueAsync(string owner, string repository, int number)

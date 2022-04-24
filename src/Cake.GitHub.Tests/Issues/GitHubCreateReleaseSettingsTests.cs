@@ -7,7 +7,6 @@ namespace Cake.GitHub.Tests
     /// </summary>
     public class GitHubSetMilestoneSettingsTests
     {
-
         [Fact]
         public void Properties_have_expected_default_values()
         {
@@ -18,6 +17,7 @@ namespace Cake.GitHub.Tests
 
             // ASSERT
             Assert.False(sut.Overwrite);
+            Assert.False(sut.CreateMilestone);
         }
     }
 }
