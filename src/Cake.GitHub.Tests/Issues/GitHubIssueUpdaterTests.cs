@@ -253,5 +253,45 @@ namespace Cake.GitHub.Tests
             // ASSERT
             _clientMock.Issues.Mock.Verify(x => x.Update(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IssueUpdate>()), Times.Never);
         }
+
+        [Fact]
+        public async Task SetMilestoneAsync_overwrites_the_milestone_of_Overwrite_setting_is_true()
+        {
+            // ARRANGE
+            var owner = "owner";
+            var repo = "repo";
+            var issueNumber = 23;
+            var sut = new GitHubIssueUpdater(_testLog, _clientMock.Object);
+
+            _clientMock.Issues.Mock
+                .Setup(x => x.Get(owner, repo, issueNumber))
+                .ReturnsAsync(
+                    new TestIssue()
+                    {
+                        Number = issueNumber,
+                        Milestone = new TestMilestone() { Number = 1, Title = "Milestone 1" }
+                    });
+
+            _clientMock.Issues.Milestone
+                .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
+                .ReturnsMilestonesAsync(
+                    new TestMilestone() { Number = 1, Title = "Milestone 1" },
+                    new TestMilestone() { Number = 2, Title = "Milestone 2" }
+                );
+
+            _clientMock.Issues.Mock.SetupUpdate();
+
+            var settings = new GitHubSetMilestoneSettings()
+            {
+                Overwrite = true
+            };
+
+            // ACT 
+            await sut.SetMilestoneAsync(owner: owner, repository: repo, number: issueNumber, milestoneTitle: "Milestone 2", settings);
+
+            // ASSERT
+            _clientMock.Issues.Mock.Verify(x => x.Update(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IssueUpdate>()), Times.Once);
+            _clientMock.Issues.Mock.Verify(x => x.Update(owner, repo, issueNumber, It.Is<IssueUpdate>(x => x.Milestone == 2)), Times.Once);
+        }
     }
 }

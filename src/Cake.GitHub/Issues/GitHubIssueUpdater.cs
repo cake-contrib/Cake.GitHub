@@ -50,14 +50,22 @@ namespace Cake.GitHub
                 _cakeLog.Verbose($"{displayName} is not yet assigned to a Milestone, setting to Milestone {milestone.Number} '{milestone.Title}'");
                 await _githubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
             }
-            else if (issue.Milestone.Number == milestone.Number)
-            {
-                _cakeLog.Verbose($"{displayName} is already assigned to Milestone {milestone.Number} '{milestone.Title}'");
-                return;
-            }
             else
             {
-                throw new MilestoneAlreadySetException($"{displayName} is already assigned to Milestone {issue.Milestone.Number} '{issue.Milestone.Title}'");
+                if (issue.Milestone.Number == milestone.Number)
+                {
+                    _cakeLog.Verbose($"{displayName} is already assigned to Milestone {milestone.Number} '{milestone.Title}'");
+                    return;
+                }
+                else if (settings.Overwrite)
+                {
+                    _cakeLog.Verbose($"Reassigning {displayName} Milestone {milestone.Number} '{milestone.Title}' because the 'Overwrite' setting was set to true.");
+                    await _githubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
+                }
+                else
+                {
+                    throw new MilestoneAlreadySetException($"{displayName} is already assigned to Milestone {issue.Milestone.Number} '{issue.Milestone.Title}'");
+                }
             }
         }
 
