@@ -1,10 +1,11 @@
 # Cake.GitHub
 
-Add-in for Cake that allows integration with GitHub. The following integrations are support:
+Add-in for Cake that allows integration with GitHub. The following integrations are supported:
 
-* Status
-* Create Release
- 
+* [Status](#status)
+* [Create Release](#create-release)
+* [Set Milestone](#set-milestone)
+
 ## Status
 
 Allows updating the status of a build in GitHub.
@@ -68,6 +69,50 @@ Task("CreateGitHubRelease")
             Overwrite = false
         }
     );
-    
+
+});
+```
+
+## Set Milestone
+
+Assigns a Issue of Pull Request to a [Milestone](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/about-milestones).
+
+API documentation: https://docs.github.com/en/rest/issues/issues#update-an-issue
+
+```cs
+Task("SetMilestone")
+.Does(async () =>
+{
+    await GitHubSetMilestoneAsync(
+        // The user name to use for authentication (pass null when using an access token).
+        userName: "user",
+
+        // The access token or password to use for authentication.
+        apiToken: "apitoken",
+
+        // The owner (user or group) of the repository.
+        owner: "owner",
+
+        // The name of the repository.
+        repository: "repository",
+
+        // The number of the issue or pull request to set the milestone for.
+        number: 23,
+
+        // The title of the milestone to assign the issue or pull request to.
+        // Note that GitHub treats milestone titles *case-sensitive*.
+        milestoneTitle: "Milestone 1",
+
+        // Specify additional settings for updating the milestone (optional)
+        settings: GitHubSetMilestoneSettings()
+        {
+            // Set to true to set the issue's or pull request's milestone even if it is already set to a different milestone (default: false)
+            Overwrite = false,
+
+            // Set to true to create a milestone with the specified title if no such milestone exists (default: false)
+            // When set to false, GitHubSetMilestoneAsync() will fail if no matching milestone is found.
+            CreateMilestone = false
+        }
+    );
 });
 ```
