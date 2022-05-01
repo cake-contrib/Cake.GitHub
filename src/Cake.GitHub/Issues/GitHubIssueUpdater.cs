@@ -22,16 +22,24 @@ namespace Cake.GitHub
         public async Task SetMilestoneAsync(string owner, string repository, int number, string milestoneTitle, GitHubSetMilestoneSettings settings)
         {
             if (String.IsNullOrWhiteSpace(owner))
+            {
                 throw new ArgumentException("Value must not be null or whitespace", nameof(owner));
+            }
 
             if (String.IsNullOrWhiteSpace(repository))
+            {
                 throw new ArgumentException("Value must not be null or whitespace", nameof(repository));
+            }
 
             if (number <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(number), "Value must not be negative");
+            }
 
             if (String.IsNullOrWhiteSpace(milestoneTitle))
+            {
                 throw new ArgumentException("Value must not be null or whitespace", nameof(milestoneTitle));
+            }
 
             _cakeLog.Information($"Setting Milestone for Issue or Pull Request {number} to '{milestoneTitle}'");
 
