@@ -33,8 +33,9 @@ namespace Cake.GitHub
             if (String.IsNullOrWhiteSpace(milestoneTitle))
                 throw new ArgumentException("Value must not be null or whitespace", nameof(milestoneTitle));
 
-
             _cakeLog.Information($"Setting Milestone for Issue or Pull Request {number}");
+
+            LogSettings(owner, repository, number, milestoneTitle, settings);
 
             // Get issue or PR (every PR is also an issue and can be retrieved via the Issues API)
             var issue = await GetIssueAsync(owner, repository, number);
@@ -69,6 +70,18 @@ namespace Cake.GitHub
             }
         }
 
+        private void LogSettings(string owner, string repository, int number, string milestoneTitle, GitHubSetMilestoneSettings settings)
+        {
+            const int padding = -29;
+
+            _cakeLog.Debug("Setting GitHub Milestone with the following settings:");
+            _cakeLog.Debug($"\t{"Owner",padding}: '{owner}'");
+            _cakeLog.Debug($"\t{"Repository",padding}: '{repository}'");
+            _cakeLog.Debug($"\t{"Issue or Pull Requets Number",padding}: '{number}'");
+            _cakeLog.Debug($"\t{"MilestoneTitle",padding}: '{milestoneTitle}'");
+            _cakeLog.Debug($"\t{nameof(settings.Overwrite),padding}: '{settings.Overwrite}'");
+            _cakeLog.Debug($"\t{nameof(settings.CreateMilestone),padding}: '{settings.CreateMilestone}'");
+        }
 
         private async Task<Milestone> GetOrCreateMilestoneAsync(string owner, string repository, string milestoneTitle, GitHubSetMilestoneSettings settings)
         {
@@ -114,7 +127,5 @@ namespace Cake.GitHub
 
             return issue;
         }
-
-        // TODO: Log settings
     }
 }
