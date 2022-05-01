@@ -10,13 +10,15 @@ namespace Cake.GitHub
         /// <summary>
         /// Initializes a new instance of the <see cref="GitHubIssueException"/> class with the specified error message.
         /// </summary>
-        protected GitHubIssueException(string message) : base(message)
+        protected GitHubIssueException(string message)
+            : base(message)
         { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GitHubIssueException"/> class with the specified error message and inner exception.
         /// </summary>
-        protected GitHubIssueException(string message, Exception innerException) : base(message, innerException)
+        protected GitHubIssueException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

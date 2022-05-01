@@ -10,7 +10,8 @@ namespace Cake.GitHub
         /// <summary>
         /// Initializes a new instance of <see cref="IssueNotFoundException"/> with the specified error message and inner exception.
         /// </summary>
-        public IssueNotFoundException(string message, Exception innerException) : base(message, innerException)
+        public IssueNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
         { }
     }
 }

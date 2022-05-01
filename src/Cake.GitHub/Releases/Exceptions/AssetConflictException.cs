@@ -8,7 +8,8 @@
         /// <summary>
         /// Initializes a new instance of <see cref="AssetConflictException"/>.
         /// </summary>
-        public AssetConflictException(string message) : base(message)
+        public AssetConflictException(string message) 
+            : base(message)
         { }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cake.GitHub
+﻿namespace Cake.GitHub
 {
     /// <summary>
     /// Thrown when an Issue's or Pull Request's Milestone is already set.
@@ -10,7 +8,8 @@ namespace Cake.GitHub
         /// <summary>
         /// Initializes a new instance of <see cref="MilestoneAlreadySetException"/> with the specified error message.
         /// </summary>
-        public MilestoneAlreadySetException(string message) : base(message)
+        public MilestoneAlreadySetException(string message)
+            : base(message)
         { }
     }
 }

@@ -9,7 +9,8 @@
         /// Initializes a new instance of <see cref="MilestoneNotFoundException"/> with the specified error message.
         /// </summary>
         /// <param name="message"></param>
-        public MilestoneNotFoundException(string message) : base(message)
+        public MilestoneNotFoundException(string message)
+            : base(message)
         { }
     }
 }
