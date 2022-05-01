@@ -121,7 +121,7 @@ namespace Cake.GitHub.Tests
         [InlineData("milestone 1", "milestone 1", true)]
         [InlineData("Milestone 1", "milestone 1", false)]
         [InlineData("milestone 1", "Milestone 1", false)]
-        public async Task SetMilestoneAsync_uses_case_insensitive_comparison_for_milestone_titles(string existingMilestoneTitle, string requestedMilestoneTitle, bool expectMatch)
+        public async Task SetMilestoneAsync_uses_case_sensitive_comparison_for_milestone_titles(string existingMilestoneTitle, string requestedMilestoneTitle, bool expectMatch)
         {
             // ARRANGE
             var owner = "owner";
@@ -255,7 +255,7 @@ namespace Cake.GitHub.Tests
         }
 
         [Fact]
-        public async Task SetMilestoneAsync_overwrites_the_milestone_of_Overwrite_setting_is_true()
+        public async Task SetMilestoneAsync_overwrites_the_milestone_if_overwrite_setting_is_true()
         {
             // ARRANGE
             var owner = "owner";
