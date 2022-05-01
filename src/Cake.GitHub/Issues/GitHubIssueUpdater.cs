@@ -47,14 +47,14 @@ namespace Cake.GitHub
 
             // Get issue or PR (every PR is also an issue and can be retrieved via the Issues API)
             var issue = await GetIssueAsync(owner, repository, number);
-            var displayName = $"{(issue.PullRequest == null ? "Issue" : "Pull Request")} {number}";
+            var displayName = $"{(issue.PullRequest is null ? "Issue" : "Pull Request")} {number}";
 
             // Get the milestone matching the specified title
             var milestone = await GetOrCreateMilestoneAsync(owner, repository, milestoneTitle, settings);
 
 
             // Update Issue or PR
-            if (issue.Milestone == null)
+            if (issue.Milestone is null)
             {
                 _cakeLog.Verbose($"{displayName} is not yet assigned to a Milestone, setting to Milestone {milestone.Number} '{milestone.Title}'");
                 await _gitHubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
@@ -99,7 +99,7 @@ namespace Cake.GitHub
             var milestones = await _gitHubClient.Issue.Milestone.GetAllForRepository(owner, repository, new MilestoneRequest() { State = ItemStateFilter.All });
             var milestone = milestones.SingleOrDefault(x => StringComparer.Ordinal.Equals(x.Title, milestoneTitle));
 
-            if (milestone == null)
+            if (milestone is null)
             {
                 if (settings.CreateMilestone)
                 {
