@@ -33,7 +33,7 @@ namespace Cake.GitHub
             if (String.IsNullOrWhiteSpace(milestoneTitle))
                 throw new ArgumentException("Value must not be null or whitespace", nameof(milestoneTitle));
 
-            _cakeLog.Information($"Setting Milestone for Issue or Pull Request {number}");
+            _cakeLog.Information($"Setting Milestone for Issue or Pull Request {number} to '{milestoneTitle}'");
 
             LogSettings(owner, repository, number, milestoneTitle, settings);
 
@@ -95,19 +95,19 @@ namespace Cake.GitHub
             {
                 if (settings.CreateMilestone)
                 {
-                    _cakeLog.Verbose($"No Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}. Creating new milestone.");
+                    _cakeLog.Verbose($"A Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}. Creating new milestone.");
                     milestone = await _gitHubClient.Issue.Milestone.Create(owner, repository, new NewMilestone(milestoneTitle));
                     _cakeLog.Verbose($"Created Milestone {milestone.Number}");
                     return milestone;
                 }
                 else
                 {
-                    throw new MilestoneNotFoundException($"No Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}");
+                    throw new MilestoneNotFoundException($"A Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}");
                 }
             }
             else
             {
-                _cakeLog.Verbose($"Found Milestone {milestone.Number} with matching title");
+                _cakeLog.Verbose($"Found Milestone {milestone.Number} with matching title '{milestoneTitle}'");
                 return milestone;
             }
         }
