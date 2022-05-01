@@ -85,8 +85,8 @@ namespace Cake.GitHub
             _cakeLog.Debug("Setting GitHub Milestone with the following settings:");
             _cakeLog.Debug($"\t{"Owner",padding}: '{owner}'");
             _cakeLog.Debug($"\t{"Repository",padding}: '{repository}'");
-            _cakeLog.Debug($"\t{"Issue or Pull Requets Number",padding}: '{number}'");
-            _cakeLog.Debug($"\t{"MilestoneTitle",padding}: '{milestoneTitle}'");
+            _cakeLog.Debug($"\t{"Issue or Pull Request Number",padding}: '{number}'");
+            _cakeLog.Debug($"\t{"Milestone Title",padding}: '{milestoneTitle}'");
             _cakeLog.Debug($"\t{nameof(settings.Overwrite),padding}: '{settings.Overwrite}'");
             _cakeLog.Debug($"\t{nameof(settings.CreateMilestone),padding}: '{settings.CreateMilestone}'");
         }
