@@ -75,7 +75,7 @@ Task("CreateGitHubRelease")
 
 ## Set Milestone
 
-Assigns an Issue of Pull Request to a [Milestone](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/about-milestones).
+Assigns an Issue or Pull Request to a [Milestone](https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/about-milestones).
 
 API documentation: https://docs.github.com/en/rest/issues/issues#update-an-issue
 
