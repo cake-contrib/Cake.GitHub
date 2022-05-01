@@ -36,8 +36,8 @@ namespace Cake.GitHub
             settings = settings ?? new GitHubSetMilestoneSettings();
 
             var connection = CreateConnection(userName, apiToken);
-            var githubClient = new GitHubClient(connection);
-            var issueUpdater = new GitHubIssueUpdater(context.Log, githubClient);
+            var gitHubClient = new GitHubClient(connection);
+            var issueUpdater = new GitHubIssueUpdater(context.Log, gitHubClient);
 
             await issueUpdater.SetMilestoneAsync(
                 owner: owner,

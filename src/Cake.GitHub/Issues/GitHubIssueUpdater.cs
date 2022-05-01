@@ -9,13 +9,13 @@ namespace Cake.GitHub
     internal sealed class GitHubIssueUpdater
     {
         private readonly ICakeLog _cakeLog;
-        private readonly IGitHubClient _githubClient;
+        private readonly IGitHubClient _gitHubClient;
 
 
-        public GitHubIssueUpdater(ICakeLog cakeLog, IGitHubClient githubClient)
+        public GitHubIssueUpdater(ICakeLog cakeLog, IGitHubClient gitHubClient)
         {
             _cakeLog = cakeLog;
-            _githubClient = githubClient;
+            _gitHubClient = gitHubClient;
         }
 
 
@@ -49,7 +49,7 @@ namespace Cake.GitHub
             if (issue.Milestone == null)
             {
                 _cakeLog.Verbose($"{displayName} is not yet assigned to a Milestone, setting to Milestone {milestone.Number} '{milestone.Title}'");
-                await _githubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
+                await _gitHubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
             }
             else
             {
@@ -61,7 +61,7 @@ namespace Cake.GitHub
                 else if (settings.Overwrite)
                 {
                     _cakeLog.Verbose($"Reassigning {displayName} Milestone {milestone.Number} '{milestone.Title}' because the 'Overwrite' setting was set to true.");
-                    await _githubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
+                    await _gitHubClient.Issue.Update(owner, repository, number, new IssueUpdate() { Milestone = milestone.Number });
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace Cake.GitHub
             _cakeLog.Verbose($"Looking up Milestone with title '{milestoneTitle}'");
 
             // Get all milestones and filter client-side since we only know the name and not the milestone number
-            var milestones = await _githubClient.Issue.Milestone.GetAllForRepository(owner, repository, new MilestoneRequest() { State = ItemStateFilter.All });
+            var milestones = await _gitHubClient.Issue.Milestone.GetAllForRepository(owner, repository, new MilestoneRequest() { State = ItemStateFilter.All });
             var milestone = milestones.SingleOrDefault(x => StringComparer.Ordinal.Equals(x.Title, milestoneTitle));
 
             if (milestone == null)
@@ -96,7 +96,7 @@ namespace Cake.GitHub
                 if (settings.CreateMilestone)
                 {
                     _cakeLog.Verbose($"No Milestone titled '{milestoneTitle}' was not found in repository {owner}/{repository}. Creating new milestone.");
-                    milestone = await _githubClient.Issue.Milestone.Create(owner, repository, new NewMilestone(milestoneTitle));
+                    milestone = await _gitHubClient.Issue.Milestone.Create(owner, repository, new NewMilestone(milestoneTitle));
                     _cakeLog.Verbose($"Created Milestone {milestone.Number}");
                     return milestone;
                 }
@@ -118,7 +118,7 @@ namespace Cake.GitHub
             Issue issue;
             try
             {
-                issue = await _githubClient.Issue.Get(owner, repository, number);
+                issue = await _gitHubClient.Issue.Get(owner, repository, number);
             }
             catch (NotFoundException ex)
             {
