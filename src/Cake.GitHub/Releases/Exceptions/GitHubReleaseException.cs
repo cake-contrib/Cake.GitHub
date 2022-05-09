@@ -16,13 +16,15 @@ namespace Cake.GitHub
         /// <summary>
         /// Initializes a new instance of <see cref="GitHubReleaseException"/>.
         /// </summary>
-        protected GitHubReleaseException(string message) : base(message)
+        protected GitHubReleaseException(string message) 
+            : base(message)
         { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="GitHubReleaseException"/>.
         /// </summary>
-        protected GitHubReleaseException(string message, Exception innerException) : base(message, innerException)
+        protected GitHubReleaseException(string message, Exception innerException) 
+            : base(message, innerException)
         { }
     }
 }

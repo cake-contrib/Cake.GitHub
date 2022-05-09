@@ -8,7 +8,8 @@
         /// <summary>
         /// Initializes a new instance of <see cref="AmbiguousTagNameException"/>.
         /// </summary>
-        public AmbiguousTagNameException(string message) : base(message)
+        public AmbiguousTagNameException(string message) 
+            : base(message)
         { }
     }
 }

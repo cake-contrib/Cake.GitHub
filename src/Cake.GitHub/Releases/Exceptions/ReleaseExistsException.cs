@@ -8,7 +8,8 @@
         /// <summary>
         /// Initializes a new instance of <see cref="ReleaseExistsException"/>
         /// </summary>
-        public ReleaseExistsException(string message) : base(message)
+        public ReleaseExistsException(string message) 
+            : base(message)
         { }
     }
 }
