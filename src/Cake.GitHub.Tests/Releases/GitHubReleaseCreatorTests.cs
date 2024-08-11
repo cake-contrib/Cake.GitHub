@@ -28,8 +28,8 @@ namespace Cake.GitHub.Tests
             _fileSystemMock = new Mock<IFileSystem>(MockBehavior.Strict);
         }
 
-// Disable nullable reference types for xunit data source, otherwise there is a compile error when building in VS 2017
-#nullable disable       
+        // Disable nullable reference types for xunit data source, otherwise there is a compile error when building in VS 2017
+#nullable disable
         public static IEnumerable<object[]> CreateReleaseTestCases()
         {
             static object[] TestCase(string id, string owner, string repository, string tagName, GitHubCreateReleaseSettings settings, NewRelease expectedRelease, IReadOnlyList<ReleaseAssetUpload> expectedAssetUploads)
@@ -193,7 +193,7 @@ namespace Cake.GitHub.Tests
             _ = id;
             var sut = new GitHubReleaseCreator(_testLog, _fileSystemMock.Object, _clientMock.Object);
 
-            var createdRelease = new TestRelease() { Id = 123, TagName = tagName };
+            var createdRelease = new TestRelease(123, tagName);
 
             _clientMock.Repository.Release
                 .Setup(x => x.Get(owner, repository, It.IsAny<string>()))
@@ -209,7 +209,7 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Repository.Release
                 .Setup(x => x.UploadAsset(createdRelease, It.IsAny<ReleaseAssetUpload>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Release release, ReleaseAssetUpload assetUpload, CancellationToken _) => new TestReleaseAsset() { Name = assetUpload.FileName });
+                .ReturnsAsync((Release release, ReleaseAssetUpload assetUpload, CancellationToken _) => new TestReleaseAsset(assetUpload.FileName));
 
             foreach (var filePath in settings.AssetsOrEmpty)
             {
@@ -310,7 +310,7 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Repository.Release
                 .Setup(x => x.Get(owner, repository, tagName))
-                .ReturnsAsync(new TestRelease() { Id = 123, TagName = tagName });
+                .ReturnsAsync(new TestRelease(123, tagName));
 
             // ACT 
             var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
@@ -339,8 +339,8 @@ namespace Cake.GitHub.Tests
                 .ThrowsNotFoundAsync();
 
             _clientMock.Repository.Release
-                .Setup(x => x.GetAll(owner, repository))
-                .ReturnsAsync(new[] { new TestRelease() { Id = 123, Draft = true, TagName = tagName } });
+            .Setup(x => x.GetAll(owner, repository))
+                .ReturnsAsync(new[] { new TestRelease(id: 123, tagName: tagName, draft: true) });
 
             // ACT 
             var ex = await Record.ExceptionAsync(async () => await sut.CreateReleaseAsync(owner, repository, tagName, settings));
@@ -365,15 +365,15 @@ namespace Cake.GitHub.Tests
             var tagName = "tagName";
             var settings = new GitHubCreateReleaseSettings() { Overwrite = true };
 
-            var existingRelease = new TestRelease() { Id = 123, TagName = tagName };
-            var createdRelease = new TestRelease() { Id = 456, TagName = tagName };
+            var existingRelease = new TestRelease(id: 123, tagName: tagName);
+            var createdRelease = new TestRelease(id: 456, tagName: tagName);
 
             _clientMock.Repository.Release
                 .Setup(x => x.Get(owner, repository, tagName))
                 .ReturnsAsync(existingRelease);
 
             _clientMock.Repository.Release
-                .Setup(x => x.Delete(owner, repository, It.IsAny<int>()))
+                .Setup(x => x.Delete(owner, repository, It.IsAny<long>()))
                 .ReturnsCompletedTask();
 
             _clientMock.Repository.Release
@@ -391,7 +391,7 @@ namespace Cake.GitHub.Tests
             // ASSERT
             Assert.NotNull(release);
             Assert.Equal(createdRelease.Id, release.Id);
-            _clientMock.Repository.Release.Verify(x => x.Delete(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+            _clientMock.Repository.Release.Verify(x => x.Delete(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()), Times.Once);
             _clientMock.Repository.Release.Verify(x => x.Delete(owner, repository, existingRelease.Id), Times.Once);
             _clientMock.Repository.Release.Verify(x => x.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<NewRelease>()), Times.Once);
             _clientMock.Repository.Release.Verify(x => x.Create(owner, repository, It.Is<NewRelease>(actual => actual.TagName == tagName)), Times.Once);
@@ -410,8 +410,8 @@ namespace Cake.GitHub.Tests
             var tagName = "tagName";
             var settings = new GitHubCreateReleaseSettings() { Overwrite = true };
 
-            var existingRelease = new TestRelease() { Id = 123, Draft = true, TagName = tagName };
-            var createdRelease = new TestRelease() { Id = 456, TagName = tagName };
+            var existingRelease = new TestRelease(id: 123, tagName: tagName, draft: true);
+            var createdRelease = new TestRelease(id: 456, tagName = tagName);
 
             // Draft releases cannot be retrieved via the tag name but are returned by GetAll()
             _clientMock.Repository.Release
@@ -423,7 +423,7 @@ namespace Cake.GitHub.Tests
                 .ReturnsAsync(new[] { existingRelease });
 
             _clientMock.Repository.Release
-                .Setup(x => x.Delete(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
+                .Setup(x => x.Delete(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()))
                 .ReturnsCompletedTask();
 
             _clientMock.Repository.Release
@@ -458,8 +458,8 @@ namespace Cake.GitHub.Tests
             var tagName = "tagName";
             var settings = new GitHubCreateReleaseSettings() { Overwrite = true };
 
-            var existingRelease1 = new TestRelease() { Id = 123, Draft = true, TagName = tagName };
-            var existingRelease2 = new TestRelease() { Id = 456, Draft = true, TagName = tagName };
+            var existingRelease1 = new TestRelease(id: 123, draft: true, tagName: tagName);
+            var existingRelease2 = new TestRelease(id: 456, draft: true, tagName: tagName);
 
             // Draft releases cannot be retrieved via the tag name but are returned by GetAll()
             _clientMock.Repository.Release
@@ -502,6 +502,6 @@ namespace Cake.GitHub.Tests
             match &= (actual.RawData != null);
 
             return match;
-        }        
+        }
     }
 }

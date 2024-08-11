@@ -4,10 +4,21 @@ namespace Cake.GitHub.Tests
 {
     public class TestReleaseAsset : ReleaseAsset
     {
-        public new string Name
-        {
-            get => base.Name;
-            set => base.Name = value;
-        }
+        public TestReleaseAsset(string name)
+            : base(
+                url: default,
+                id: default,
+                nodeId: default,
+                name: name,
+                label: default,
+                state: default,
+                contentType: default,
+                size: default,
+                downloadCount: default,
+                createdAt: default,
+                updatedAt: default,
+                browserDownloadUrl: default,
+                uploader: default)
+        { }
     }
 }
