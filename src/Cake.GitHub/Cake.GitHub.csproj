@@ -17,6 +17,7 @@
 		<Description>GitHub Addin for Cake Build Automation System.</Description>
 		<Authors>Geert van Horrik, Cake Contributors</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

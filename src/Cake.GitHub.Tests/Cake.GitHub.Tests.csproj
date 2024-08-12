@@ -3,6 +3,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>Cake.GitHub.Tests</AssemblyName>
 		<PackageId>Cake.GitHub.Tests</PackageId>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
