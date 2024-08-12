@@ -1,36 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <VersionPrefix>0.2.0</VersionPrefix>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Cake.GitHub</AssemblyName>
-    <PackageId>Cake.GitHub</PackageId>
-    <NetStandardImplicitPackageVersion>2.0.0</NetStandardImplicitPackageVersion>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <Copyright>Copyright 2017 - 2024 (c) Geert van Horrik and contributors</Copyright>
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/cake-contrib/Cake.GitHub</PackageProjectUrl>
-    <PackageIconUrl>https://cdn.jsdelivr.net/gh/cake-contrib/graphics/png/addin/cake-contrib-addin-medium.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/cake-contrib/Cake.GitHub.git</RepositoryUrl>
-    <RepositoryType>GitHub</RepositoryType>
-    <PackageTags>Cake Script Build GitHub cake-addin</PackageTags>
-    <Description>GitHub Addin for Cake Build Automation System.</Description>
-    <Authors>Geert van Horrik, Cake Contributors</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<VersionPrefix>0.2.0</VersionPrefix>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<AssemblyName>Cake.GitHub</AssemblyName>
+		<PackageId>Cake.GitHub</PackageId>
+		<NetStandardImplicitPackageVersion>2.0.0</NetStandardImplicitPackageVersion>
+		<PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+		<Copyright>Copyright 2017 - 2024 (c) Geert van Horrik and contributors</Copyright>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/cake-contrib/Cake.GitHub</PackageProjectUrl>
+		<PackageIconUrl>https://cdn.jsdelivr.net/gh/cake-contrib/graphics/png/addin/cake-contrib-addin-medium.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/cake-contrib/Cake.GitHub.git</RepositoryUrl>
+		<RepositoryType>GitHub</RepositoryType>
+		<PackageTags>Cake Script Build GitHub cake-addin</PackageTags>
+		<Description>GitHub Addin for Cake Build Automation System.</Description>
+		<Authors>Geert van Horrik, Cake Contributors</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Update="NETStandard.Library" Version="2.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Cake.Core" Version="0.33.0">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Octokit" Version="13.0.1" />
-	  <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Cake.Core" Version="4.0.0">
+			<PrivateAssets>All</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Octokit" Version="13.0.1" />
+	</ItemGroup>
 
 </Project>
