@@ -15,6 +15,8 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+!src/Cake.GitHub/Releases/
+!src/Cake.GitHub.Tests/Releases/
 x64/
 x86/
 bld/

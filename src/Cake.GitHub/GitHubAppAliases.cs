@@ -21,7 +21,7 @@
     [CakeAliasCategory("GitHub")]
     public static partial class GitHubAliases
     {
-        private static ApiConnection CreateApiConnection(string userName, string apiToken)
+        private static Connection CreateConnection(string? userName, string apiToken)
         {
             Credentials credentials;
 
@@ -39,8 +39,7 @@
                 Credentials = credentials
             };
 
-            var apiConnection = new Octokit.ApiConnection(connection);
-            return apiConnection;
+            return connection;
         }
     }
 }

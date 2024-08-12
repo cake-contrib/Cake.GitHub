@@ -15,7 +15,11 @@
         /// Updates the status for a specific build.
         /// </summary>
         /// <param name="context">The Cake context</param>
-        /// <param name="file">The app package.</param>
+        /// <param name="userName">The user name to use for authentication (pass <c>null</c> when using an access token).</param>
+        /// <param name="apiToken">The access token or password to use for authentication.</param>
+        /// <param name="owner">The owner (user or group) of the repository to report the status for.</param>
+        /// <param name="repository">The name of the repository to report the status for.</param>
+        /// <param name="reference">The git reference to report the status for.</param>
         /// <param name="settings">The status settings.</param>
         /// <example>
         /// <code>
@@ -30,7 +34,7 @@
         /// </example>
         [CakeAliasCategory("Deployment")]
         [CakeMethodAlias]
-        public static GitHubStatusResult GitHubStatus(this ICakeContext context, string userName, string apiToken, string owner, string repository, string reference, GitHubStatusSettings settings)
+        public static GitHubStatusResult GitHubStatus(this ICakeContext context, string? userName, string apiToken, string owner, string repository, string reference, GitHubStatusSettings? settings)
         {
 #if DEBUG
             if (!Debugger.IsAttached)
@@ -41,7 +45,7 @@
 
             settings = settings ?? new GitHubStatusSettings();
 
-            var connection = CreateApiConnection(userName, apiToken);
+            var connection = CreateConnection(userName, apiToken);
 
             try
             {
@@ -71,7 +75,7 @@
                         break;
                 }
 
-                var commitStatusClient = new CommitStatusClient(connection);
+                var commitStatusClient = new CommitStatusClient(new ApiConnection(connection));
                 var createStatusTask = commitStatusClient.Create(owner, repository, reference, commitStatus);
                 createStatusTask.Wait();
 
