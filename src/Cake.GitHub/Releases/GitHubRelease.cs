@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Octokit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Octokit;
 
 namespace Cake.GitHub
 {
@@ -15,7 +15,7 @@ namespace Cake.GitHub
         /// <summary>
         /// Gets the release's id
         /// </summary>
-        public int Id { get; }
+        public long Id { get; }
 
         /// <summary>
         /// Gets the url of the release in the GitHub web interface.
@@ -71,7 +71,7 @@ namespace Cake.GitHub
         /// <summary>
         /// Initializes a new instance of <see cref="GitHubRelease"/>
         /// </summary>
-        public GitHubRelease(int id, string htmlUrl, string tagName, string targetCommitish, string name, string body, bool draft, bool prerelease, DateTime createdAt, DateTime? publishedAt)
+        public GitHubRelease(long id, string htmlUrl, string tagName, string targetCommitish, string name, string body, bool draft, bool prerelease, DateTime createdAt, DateTime? publishedAt)
         {
             Id = id;
             HtmlUrl = htmlUrl;
@@ -92,7 +92,7 @@ namespace Cake.GitHub
         /// Converts a Octokit <see cref="Release" /> to a <see cref="GitHubRelease"/>
         /// </summary>
         internal static GitHubRelease FromRelease(Release release)
-        {            
+        {
             var githubRelease = new GitHubRelease(
                 id: release.Id,
                 htmlUrl: release.HtmlUrl,

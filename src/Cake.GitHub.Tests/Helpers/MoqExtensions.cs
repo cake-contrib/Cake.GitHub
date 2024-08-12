@@ -22,7 +22,7 @@ namespace Cake.GitHub.Tests
 
         public static IReturnsResult<IIssuesClient> SetupUpdate(this Mock<IIssuesClient> mock) =>
             mock.Setup(x => x.Update(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IssueUpdate>()))
-                .ReturnsAsync((string owner, string repo, int number, IssueUpdate update) => new TestIssue() { Number = number });
+                .ReturnsAsync((string owner, string repo, int number, IssueUpdate update) => new TestIssue(number));
 
         public static IReturnsResult<IMilestonesClient> ReturnsMilestonesAsync(this IReturns<IMilestonesClient, Task<IReadOnlyList<Milestone>>> mock, params Milestone[] milestones) =>
             mock.ReturnsAsync(milestones);

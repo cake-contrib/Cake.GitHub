@@ -96,13 +96,13 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, number))
-                .ReturnsAsync(new TestIssue() { Number = number });
+                .ReturnsAsync(new TestIssue(number));
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
                 .ReturnsMilestonesAsync(
-                    new TestMilestone() { Number = 1, Title = "Milestone 1" },
-                    new TestMilestone() { Number = 1, Title = "Milestone 2" }
+                    new TestMilestone(number: 1, title: "Milestone 1"),
+                    new TestMilestone(number: 1, title: "Milestone 2")
                 );
 
             // ACT 
@@ -131,14 +131,14 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, number))
-                .ReturnsAsync(new TestIssue() { Number = number });
+                .ReturnsAsync(new TestIssue(number));
 
             _clientMock.Issues.Mock.SetupUpdate();
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
                 .ReturnsMilestonesAsync(
-                    new TestMilestone() { Number = 1, Title = existingMilestoneTitle }
+                    new TestMilestone(number: number, title: existingMilestoneTitle)
                 );
 
             // ACT 
@@ -168,12 +168,12 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, issueNumber))
-                .ReturnsAsync(new TestIssue() { Number = issueNumber });
+                .ReturnsAsync(new TestIssue(issueNumber));
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
                 .ReturnsMilestonesAsync(
-                    new TestMilestone() { Number = milestoneNumber, Title = milestoneTitle }
+                    new TestMilestone(number: milestoneNumber, title: milestoneTitle)
                 );
 
             _clientMock.Issues.Mock.SetupUpdate();
@@ -197,18 +197,13 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, issueNumber))
-                .ReturnsAsync(
-                    new TestIssue()
-                    {
-                        Number = issueNumber,
-                        Milestone = new TestMilestone() { Number = 1, Title = "Milestone 1" }
-                    });
+                .ReturnsAsync(new TestIssue(number: issueNumber, milestone: new TestMilestone(number: 1, title: "Milestone 1")));
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
                 .ReturnsMilestonesAsync(
-                    new TestMilestone() { Number = 1, Title = "Milestone 1" },
-                    new TestMilestone() { Number = 2, Title = "Milestone 2" }
+                    new TestMilestone(number: 1, title: "Milestone 1"),
+                    new TestMilestone(number: 2, title: "Milestone 2")
                 );
 
             _clientMock.Issues.Mock.SetupUpdate();
@@ -234,18 +229,11 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, issueNumber))
-                .ReturnsAsync(
-                    new TestIssue()
-                    {
-                        Number = issueNumber,
-                        Milestone = new TestMilestone() { Number = milestoneNumber }
-                    });
+                .ReturnsAsync(new TestIssue(number: issueNumber, milestone: new TestMilestone(milestoneNumber)));
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
-                .ReturnsMilestonesAsync(
-                    new TestMilestone() { Number = milestoneNumber, Title = milestoneTitle }
-                );
+                .ReturnsMilestonesAsync(new TestMilestone(number: milestoneNumber, title: milestoneTitle));
 
             // ACT 
             await sut.SetMilestoneAsync(owner: owner, repository: repo, number: issueNumber, milestoneTitle: milestoneTitle, new GitHubSetMilestoneSettings());
@@ -265,18 +253,13 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, issueNumber))
-                .ReturnsAsync(
-                    new TestIssue()
-                    {
-                        Number = issueNumber,
-                        Milestone = new TestMilestone() { Number = 1, Title = "Milestone 1" }
-                    });
+                .ReturnsAsync(new TestIssue(number: issueNumber, milestone: new TestMilestone(number: 1, title: "Milestone 1")));
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
                 .ReturnsMilestonesAsync(
-                    new TestMilestone() { Number = 1, Title = "Milestone 1" },
-                    new TestMilestone() { Number = 2, Title = "Milestone 2" }
+                    new TestMilestone(number: 1, title: "Milestone 1"),
+                    new TestMilestone(number: 2, title: "Milestone 2")
                 );
 
             _clientMock.Issues.Mock.SetupUpdate();
@@ -305,7 +288,7 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Mock
                 .Setup(x => x.Get(owner, repo, issueNumber))
-                .ReturnsAsync(new TestIssue() { Number = issueNumber });
+                .ReturnsAsync(new TestIssue(issueNumber));
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.GetAllForRepository(owner, repo, It.IsAny<MilestoneRequest>()))
@@ -313,7 +296,7 @@ namespace Cake.GitHub.Tests
 
             _clientMock.Issues.Milestone
                 .Setup(x => x.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<NewMilestone>()))
-                .ReturnsAsync((string repo, string owner, NewMilestone newMilestone) => new TestMilestone() { Number = 2, Title = newMilestone.Title });
+                .ReturnsAsync((string repo, string owner, NewMilestone newMilestone) => new TestMilestone(number: 2, title: newMilestone.Title));
 
             _clientMock.Issues.Mock.SetupUpdate();
 

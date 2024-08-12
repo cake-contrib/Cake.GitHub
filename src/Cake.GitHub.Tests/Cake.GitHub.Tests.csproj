@@ -17,7 +17,7 @@
     <PackageReference Include="NETStandard.Library" Version="2.0.1" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-	<PackageReference Include="Moq" Version="4.16.1" />
+	  <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 
   <ItemGroup>
