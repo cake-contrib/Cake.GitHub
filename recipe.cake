@@ -16,6 +16,7 @@ BuildParameters.SetParameters(
     repositoryName: "Cake.GitHub",
     appVeyorAccountName: "cakecontrib",
     shouldUseDeterministicBuilds: true,
+    shouldRunCodecov: false,
     shouldGenerateDocumentation: false, // Documentation is generated from Cake.GitHub.Website
     shouldRunInspectCode: false,
     shouldRunCoveralls: false);  // Disabled because it's currently failing
