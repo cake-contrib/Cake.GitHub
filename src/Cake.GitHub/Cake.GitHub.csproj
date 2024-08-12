@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<VersionPrefix>0.2.0</VersionPrefix>
 		<TargetFrameworks>net6.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyName>Cake.GitHub</AssemblyName>
 		<PackageId>Cake.GitHub</PackageId>
-		<NetStandardImplicitPackageVersion>2.0.0</NetStandardImplicitPackageVersion>
 		<PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
 		<Copyright>Copyright 2017 - 2024 (c) Geert van Horrik and contributors</Copyright>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -26,5 +24,4 @@
 		</PackageReference>
 		<PackageReference Include="Octokit" Version="13.0.1" />
 	</ItemGroup>
-
 </Project>
