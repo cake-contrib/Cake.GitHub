@@ -18,7 +18,8 @@ BuildParameters.SetParameters(
     shouldRunCodecov: false,
     shouldGenerateDocumentation: false,
     shouldRunInspectCode: false,
-    shouldRunCoveralls: false);
+    shouldRunCoveralls: false,
+    shouldRunDotNetCorePack: true);
 
 BuildParameters.PrintParameters(Context);
 
