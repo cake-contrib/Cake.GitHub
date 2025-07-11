@@ -23,6 +23,10 @@ BuildParameters.SetParameters(
 
 BuildParameters.PrintParameters(Context);
 
+ToolSettings.SetToolPreprocessorDirectives(
+    gitVersionGlobalTool: "#tool dotnet:?package=GitVersion.Tool&version=5.12.0"
+);
+
 ToolSettings.SetToolSettings(
     context: Context,
     skipDuplicatePackages: true,
