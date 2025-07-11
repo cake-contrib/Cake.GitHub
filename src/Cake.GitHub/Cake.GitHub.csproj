@@ -19,7 +19,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Cake.Core" Version="4.0.0">
+		<PackageReference Include="Cake.Core" Version="5.0.0">
 			<PrivateAssets>All</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Octokit" Version="13.0.1" />
